@@ -1,7 +1,7 @@
 Package: MLASZraportyAdm4
 Title: Pakiet zawierający funkcje potrzebne do generowania automatycznych
     raportów dla 4. edycji monitoringu z użyciem danych rejestrowych
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person(given = "Bartłomiej", family = "Płatkowski",
     email = "b.platskowski@ibe.edu.pl", role = c("aut", "cre"))
