@@ -28,18 +28,12 @@ params:
   typDokumentu: pdf
   wyrownanieTabWykr: center
   rok: 2023
-wskazniki:
-  wskazniki: szk
-  wskaznikiGrPor: god
-  wskaznikiKraj1: god1
-  wskaznikiKraj2: god2
-  wskaznikiSzkozaw: szkozaw
-  wskaznikiWoj: woj
 ---
 
 ```{r setup}
 source("setup.R",
-       echo = FALSE)
+       echo = FALSE,
+       local = knitr::knit_global())
 ```
 
 `r ifelse(typDokumentu %in% "pdf", "---", "")`
@@ -1493,7 +1487,7 @@ Należy zastrzec, że kwoty te nie są porównywalne, ze względu na różnice w
 Na poniższej ilustracji opisano sposób prezentowania danych na wykresie typu boxplot wraz z ich interpretacją. Dane na tym wykresie są fikcyjne – służy on tylko objaśnieniu jakiego rodzaju informacje można znaleźć na tego typu wykresach.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, out.width = '100%'}
-knitr::include_graphics("../boxplot_edycja3.png")
+knitr::include_graphics("../boxplot_edycja4.png")
 ```
 
 ### Absolwenci kontynuujący naukę

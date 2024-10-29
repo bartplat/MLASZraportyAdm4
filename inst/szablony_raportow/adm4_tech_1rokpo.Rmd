@@ -28,18 +28,12 @@ params:
   typDokumentu: pdf
   wyrownanieTabWykr: center
   rok: 2023
-wskazniki:
-  wskazniki: szk
-  wskaznikiGrPor: god
-  wskaznikiKraj1: god1
-  wskaznikiKraj2: god2
-  wskaznikiSzkozaw: szkozaw
-  wskaznikiWoj: woj
 ---
 
 ```{r setup}
 source("setup.R",
-       echo = FALSE)
+       echo = FALSE,
+       local = knitr::knit_global())
 ```
 
 `r ifelse(typDokumentu %in% "pdf", "---", "")`

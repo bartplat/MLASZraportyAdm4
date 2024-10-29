@@ -24,6 +24,7 @@ if (zawodowa == 1) {
   szkozaw = szkozaw %>% 
     filter(id_szk %in% szk$id_szk)
 }
+data("powiaty")
 
 # obiekt powiaty
 powiaty_dop = powiaty %>%
