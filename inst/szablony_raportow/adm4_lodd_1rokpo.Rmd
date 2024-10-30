@@ -29,7 +29,7 @@ params:
   rok: 2023
 ---
 
-```{r setup}
+```{r setup, echo=FALSE, include=FALSE}
 source("setup.R",
        echo = FALSE,
        local = knitr::knit_global())

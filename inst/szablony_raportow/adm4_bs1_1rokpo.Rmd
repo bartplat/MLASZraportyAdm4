@@ -1,6 +1,6 @@
 ---
 title: |
-  | Raport roczny z monitoringu karier absolwentów, którzy ukończyli branżową szkołę I stopnia
+  | Raport roczny z monitoringu karier absolwentów, którzy ukończyli branżową szkołę I stopnia w roku szkolnym `r params$rok - 1`/`r params$rok`
 subtitle: |
   | `r get(params$obiektWskazniki)$dane_szkoly[[1]]$nazwa`
   | `r get(params$obiektWskazniki)$dane_szkoly[[1]]$adres`
@@ -30,7 +30,7 @@ params:
   rok: 2023
 ---
 
-```{r setup}
+```{r setup, echo=FALSE, include=FALSE}
 source("setup.R",
        echo = FALSE,
        local = knitr::knit_global())
