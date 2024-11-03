@@ -630,9 +630,9 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
 ## Kontynuowanie nauki na studiach w poszczególnych dziedzinach i dyscyplinach
 
 ```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
-if (length(szk$liczebnosc_dziedziny[[1]]) > 1) {
+if (!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek)) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
-    if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0) %in% 1) {
+    if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0, na.rm = TRUE) == 1) {
       cat(
         "Jedyną dziedziną, w której w grudniu ",
         params$rok,
@@ -640,7 +640,7 @@ if (length(szk$liczebnosc_dziedziny[[1]]) > 1) {
         szk$liczebnosc_dziedziny[[1]]$dziedzina_kont[szk$liczebnosc_dziedziny[[1]]$odsetek > 0],
         sep = ""
       )
-    } else if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0) > 1 & sum(szk$liczebnosc_dziedziny[[1]]$odsetek %in% max(szk$liczebnosc_dziedziny[[1]]$odsetek)) %in% 1) {
+    } else if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0, na.rm = TRUE) > 1 & sum(szk$liczebnosc_dziedziny[[1]]$odsetek %in% max(szk$liczebnosc_dziedziny[[1]]$odsetek)) == 1) {
       cat(
         "Dziedziną, w której w grudniu ",
         params$rok,
@@ -653,7 +653,7 @@ if (length(szk$liczebnosc_dziedziny[[1]]) > 1) {
         " roku studiowali.",
         sep = ""
       )
-    } else if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0) > 1 & sum(szk$liczebnosc_dziedziny[[1]]$odsetek %in% max(szk$liczebnosc_dziedziny[[1]]$odsetek)) > 1) {
+    } else if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0, na.rm = TRUE) > 1 & sum(szk$liczebnosc_dziedziny[[1]]$odsetek %in% max(szk$liczebnosc_dziedziny[[1]]$odsetek)) > 1) {
       cat(
         "Dziedzinami, w których w grudniu ",
         params$rok,
@@ -676,7 +676,7 @@ if (length(szk$liczebnosc_dziedziny[[1]]) > 1) {
 ```
 
 ```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
-if (length(szk$liczebnosc_dziedziny[[1]]) > 1) {
+if (!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek)) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
     cat("Tabela ",
         tab_num(),
@@ -718,7 +718,7 @@ if (length(szk$liczebnosc_dziedziny[[1]]) > 1) {
 ```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
 if (length(szk$liczebnosc_dyscypliny[[1]]) > 1) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
-    if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0) %in% 1) {
+    if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0, na.rm = TRUE) == 1) {
       cat(
         "Jedyną dyscypliną, w której w grudniu ",
         params$rok,
@@ -726,7 +726,7 @@ if (length(szk$liczebnosc_dyscypliny[[1]]) > 1) {
         szk$liczebnosc_dyscypliny[[1]]$dyscyplina_wiodaca_kont[szk$liczebnosc_dyscypliny[[1]]$odsetek > 0],
         sep = ""
       )
-    } else if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0) > 1 & sum(szk$liczebnosc_dyscypliny[[1]]$odsetek %in% max(szk$liczebnosc_dyscypliny[[1]]$odsetek)) %in% 1) {
+    } else if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0, na.rm = TRUE) > 1 & sum(szk$liczebnosc_dyscypliny[[1]]$odsetek %in% max(szk$liczebnosc_dyscypliny[[1]]$odsetek)) == 1) {
       cat(
         "Dyscypliną, w której w grudniu ",
         params$rok,
@@ -739,7 +739,7 @@ if (length(szk$liczebnosc_dyscypliny[[1]]) > 1) {
         " roku studiowali.",
         sep = ""
       )
-    } else if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0) > 1 & sum(szk$liczebnosc_dyscypliny[[1]]$odsetek %in% max(szk$liczebnosc_dyscypliny[[1]]$odsetek)) > 1) {
+    } else if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0, na.rm = TRUE) > 1 & sum(szk$liczebnosc_dyscypliny[[1]]$odsetek %in% max(szk$liczebnosc_dyscypliny[[1]]$odsetek)) > 1) {
       cat(
         "Dyscyplinami, w których w grudniu ",
         params$rok,
@@ -796,51 +796,53 @@ if (length(szk$liczebnosc_dyscypliny[[1]]) > 1) {
 ```
 
 ```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
-l_col = length(szk$dyscypliny_zawody[[1]]) - 1
-if (length(szk$dyscypliny_zawody[[1]]) > 1 & l_col > 0) {
-  cat(
-    "W poniższej tabeli przedstawione zostały informacje o dyscyplinach, w których studiowali absolwenci Państwa szkoły, należący do poszczególnych grup (liczących co najmniej 10 osób) wyróżnionych ze względu na zawód, w którym się w niej kształcili.")
-  
-  naz_wiersze_nag = character()
-  for (i in 1:l_col) {
-    naz_wiersze_nag = paste(
-      c(naz_wiersze_nag, paste(i, "-", names(szk$dyscypliny_zawody[[1]])[i + 1])),
-      collapse = "\n")
+if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
+  l_col = length(szk$dyscypliny_zawody[[1]]) - 1
+  if (length(szk$dyscypliny_zawody[[1]]) > 1 & l_col > 0) {
+    cat(
+      "W poniższej tabeli przedstawione zostały informacje o dyscyplinach, w których studiowali absolwenci Państwa szkoły, należący do poszczególnych grup (liczących co najmniej 10 osób) wyróżnionych ze względu na zawód, w którym się w niej kształcili.")
+    
+    naz_wiersze_nag = character()
+    for (i in 1:l_col) {
+      naz_wiersze_nag = paste(
+        c(naz_wiersze_nag, paste(i, "-", names(szk$dyscypliny_zawody[[1]])[i + 1])),
+        collapse = "\n")
+    }
+    wiersze_nag = l_col
+    names(wiersze_nag) = paste0("% wśród studiujących absolwentów Państwa\nszkoły, którzy kształcili się w niej w zawodzie:\n", naz_wiersze_nag)
+    
+    nagl = rep(1, l_col, by = 1)
+    names(nagl) = lapply(1:l_col, as.character)
+    
+    cat("\n\nTabela ",
+        tab_num(),
+        ": Dyscypliny, w których absolwenci Państwa szkoły najczęściej studiowali w grudniu ",
+        params$rok,
+        " roku - w grupach wyróżnionych ze względu na zawód wyuczony w szkole policealnej (%)",
+        sep = "")
+    
+    # tu nie ma ograniczenia na max 10 dyscyplin, natomiast jest ograniczenie na liczbę zawodów
+    szk$dyscypliny_zawody[[1]] %>% 
+      as_tibble() %>% 
+      mutate(across(2:ncol(.),
+                    ~paste0(round(. * 100), "\\%"))) %>% 
+      kable(format = "latex",
+            booktabs = TRUE,
+            escape = FALSE,
+            longtable = TRUE,
+            linesep = "",
+            # align = "lcccccccc",
+            col.names = NULL,
+            digits = 0) %>%
+      kable_styling(position = wyrownanieTabWykr,
+                    latex_options = c("hold_position", "repeat_header"),
+                    full_width = FALSE,
+                    repeat_header_text = "(ciąg dalszy tabeli)") %>%
+      add_header_above(header = c(paste0("Dyscypliny, w których absolwenci Państwa\nszkoły studiowali w grudniu ", params$rok, " roku"), nagl), align = "l") %>% 
+      add_header_above(header = c(" ", wiersze_nag), align = "l")
+  } else {
+    cat("Żadna grupa studiujących absolwentów Państwa szkoły wyróżniona ze względu na zawód, którego się w niej uczyli, nie liczyła co najmniej 10 osób. Dlatego, zgodnie z zasadą chroniącą anonimowość absolwentów, informacje dotyczące dyscyplin, w których studiowali absolwenci Państwa szkoły wykształceni w poszczególnych zawodach nie zostały przedstawione.")
   }
-  wiersze_nag = l_col
-  names(wiersze_nag) = paste0("% wśród studiujących absolwentów Państwa\nszkoły, którzy kształcili się w niej w zawodzie:\n", naz_wiersze_nag)
-  
-  nagl = rep(1, l_col, by = 1)
-  names(nagl) = lapply(1:l_col, as.character)
-  
-  cat("\n\nTabela ",
-      tab_num(),
-      ": Dyscypliny, w których absolwenci Państwa szkoły najczęściej studiowali w grudniu ",
-      params$rok,
-      " roku - w grupach wyróżnionych ze względu na zawód wyuczony w szkole policealnej (%)",
-      sep = "")
-  
-  # tu nie ma ograniczenia na max 10 dyscyplin, natomiast jest ograniczenie na liczbę zawodów
-  szk$dyscypliny_zawody[[1]] %>% 
-    as_tibble() %>% 
-    mutate(across(2:ncol(.),
-                ~paste0(round(. * 100), "\\%"))) %>% 
-    kable(format = "latex",
-        booktabs = TRUE,
-        escape = FALSE,
-        longtable = TRUE,
-        linesep = "",
-        # align = "lcccccccc",
-        col.names = NULL,
-        digits = 0) %>%
-  kable_styling(position = wyrownanieTabWykr,
-                latex_options = c("hold_position", "repeat_header"),
-                full_width = FALSE,
-                repeat_header_text = "(ciąg dalszy tabeli)") %>%
-    add_header_above(header = c(paste0("Dyscypliny, w których absolwenci Państwa\nszkoły studiowali w grudniu ", params$rok, " roku"), nagl), align = "l") %>% 
-    add_header_above(header = c(" ", wiersze_nag), align = "l")
-} else {
-  cat("Żadna grupa studiujących absolwentów Państwa szkoły wyróżniona ze względu na zawód, którego się w niej uczyli, nie liczyła co najmniej 10 osób. Dlatego, zgodnie z zasadą chroniącą anonimowość absolwentów, informacje dotyczące dyscyplin, w których studiowali absolwenci Państwa szkoły wykształceni w poszczególnych zawodach nie zostały przedstawione.")
 }
 ```
 
@@ -1528,13 +1530,13 @@ W aneksie zaprezentowano tabelaryczne rozkłady wybranych wskaźników przedstaw
 if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
   god2$S3_12[[1]] %>%
     as_tibble() %>% 
-    select(n, tylko_ucz, ucz_prac, tylko_prac, neet) %>% 
+    select(n, tylko_ucz, ucz_prac, tylko_prac, bezrob, neet) %>% 
     mutate(across(n, ~linebreak(paste0("Absolwenci szkół policealnych\nw całym kraju"), align = "l"))) %>%
     mutate(across(tylko_ucz:neet,
                   ~paste0(round(. * 100), "\\%"))) %>%
     kable(format = "latex", booktabs = TRUE, escape = FALSE, longtable = TRUE,
           linesep = "",
-          align = "lcccc",
+          align = "lccccc",
           col.names = NULL,
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
@@ -1542,12 +1544,12 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
                   # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
-    add_header_above(c(" ", "1. Tylko nauka" = 1, "2. Nauka i praca" = 1, "3. Tylko praca" = 1, "4. Brak nauki i\nbrak pracy" = 1),
-                     align = c("l", "c", "c", "c", "c"))
+    aadd_header_above(c(" ", "1. Tylko nauka" = 1, "2. Nauka i praca" = 1, "3. Tylko praca" = 1, "4. Bezrobocie" = 1, "5. Brak danych o aktywności" = 1),
+                     align = c("l", "c", "c", "c", "c", "c"))
 } else if (woj$l_abs[[1]] >= progLiczebnosci & woj$S3_12[[1]]$n >= progLiczebnosci) {
   tabela_woj = woj$S3_12[[1]] %>% 
     as_tibble() %>% 
-    select(n, tylko_ucz, ucz_prac, tylko_prac, neet) %>% 
+    select(n, tylko_ucz, ucz_prac, tylko_prac, bezrob, neet) %>% 
     mutate(across(n, ~linebreak(paste0("Absolwenci szkół policealnych\nw województwie\n",
                                        woj$odmiany$nazwa_dop[[1]]), align = "l"))) %>%
     mutate(across(tylko_ucz:neet,
@@ -1555,7 +1557,7 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
   
   tabela_kraj = god2$S3_12[[1]] %>%
     as_tibble() %>% 
-    select(n, tylko_ucz, ucz_prac, tylko_prac, neet) %>% 
+    select(n, tylko_ucz, ucz_prac, tylko_prac, bezrob, neet) %>% 
     mutate(across(n, ~linebreak(paste0("Absolwenci szkół policealnych\nw całym kraju"), align = "l"))) %>%
     mutate(across(tylko_ucz:neet,
                   ~paste0(round(. * 100), "\\%")))
@@ -1564,7 +1566,7 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
   rbind(tabela_woj, tabela_kraj) %>% 
     kable(format = "latex", booktabs = TRUE, escape = FALSE, longtable = TRUE,
           linesep = "",
-          align = "lcccc",
+          align = "lccccc",
           col.names = NULL,
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
@@ -1572,8 +1574,8 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
                   # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
-    add_header_above(c(" ", "1. Tylko nauka" = 1, "2. Nauka i praca" = 1, "3. Tylko praca" = 1, "4. Brak nauki i\nbrak pracy" = 1),
-                     align = c("l", "c", "c", "c", "c"))
+    add_header_above(c(" ", "1. Tylko nauka" = 1, "2. Nauka i praca" = 1, "3. Tylko praca" = 1, "4. Bezrobocie" = 1, "5. Brak danych o aktywności" = 1),
+                     align = c("l", "c", "c", "c", "c", "c"))
 }
 ```
 
@@ -1593,7 +1595,7 @@ for (i in 1:nrow(god1)) {
 tabela = tabela %>% 
   filter(n >= progLiczebnosci) %>% 
   arrange(desc(n)) %>% 
-  select(nazwa_zaw, tylko_ucz, ucz_prac, tylko_prac, neet)
+  select(nazwa_zaw, tylko_ucz, ucz_prac, tylko_prac, bezrob, neet)
 
 if (nrow(tabela) > 0) {
   cat(
@@ -1604,7 +1606,7 @@ if (nrow(tabela) > 0) {
                   ~paste0(round(. * 100), "\\%"))) %>%
     kable(format = "latex", booktabs = TRUE, escape = FALSE, longtable = TRUE,
           linesep = "",
-          align = "lcccc",
+          align = "lccccc",
           col.names = NULL,
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
@@ -1612,16 +1614,17 @@ if (nrow(tabela) > 0) {
                   # font_size = 10,
                   full_width = TRUE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
-    add_header_above(c("Zawody, w których obecni absolwenci\nuczyli się w szkołach policealnych\nw całym kraju:", "1" = 1, "2" = 1, "3" = 1, "4" = 1),
-                     align = c("l", "c", "c", "c", "c")) %>%
+    add_header_above(c("Zawody, w których obecni absolwenci\nuczyli się w szkołach policealnych\nw całym kraju:", "1" = 1, "2" = 1, "3" = 1, "4" = 1, "5" = 1),
+                     align = c("l", "c", "c", "c", "c", "c")) %>%
     add_header_above(c(" ",
-                       "1. Tylko nauka\n2. Nauka i praca\n3. Tylko praca\n4. Brak nauki i brak pracy" = 4),
+                       "1. Tylko nauka\n2. Nauka i praca\n3. Tylko praca\n4. Bezrobocie\n5. Brak danych o aktywności" = 5),
                      align = c("c", "l")) %>% 
     column_spec(1, width = "6cm") %>%
-    column_spec(2, width = "2.25cm") %>%
-    column_spec(3, width = "2.25cm") %>%
-    column_spec(4, width = "2.25cm") %>%
-    column_spec(5, width = "2.25cm")
+    column_spec(2, width = "2cm") %>%
+    column_spec(3, width = "2cm") %>%
+    column_spec(4, width = "2cm") %>%
+    column_spec(5, width = "2cm") %>% 
+    column_spec(6, width = "2cm")
 } else {
   cat("W żadnym zawodzie, w którym absolwenci ukończyli kształcenie w Państwa szkole, na poziomie wszystkich szkół policealnych nie udało się zebrać minimum 10 absolwentów, aby móc przedstawić wyniki.")
 }
