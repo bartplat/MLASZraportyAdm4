@@ -47,7 +47,7 @@ source("setup.R",
 
 # 2. Ścieżki edukacyjno-zawodowe
 
-W porównaniu z raportami z wcześniejszych edycji monitoringu karier, zwiększono liczbę prezentowanych statusów opisujących sytuację edukacyjno-zawodową absolwentów. Status „Brak nauki i brak pracy” rozdzielono na „Bezrobocie” oraz „Brak danych o aktywności”. Poniższa tabela przybliża konstrukcję poszczególnych statusów.
+W porównaniu z raportami z wcześniejszych edycji monitoringu karier, zwiększono liczbę prezentowanych statusów, opisujących sytuację edukacyjno-zawodową absolwentów. Status „Brak nauki i brak pracy” rozdzielono na „Bezrobocie” oraz „Brak danych o aktywności”. Poniższa tabela przybliża konstrukcję poszczególnych statusów.
 
 ```{r}
 statusy_df %>% 
@@ -64,7 +64,7 @@ statusy_df %>%
   column_spec(2, width = "12cm")
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$S3_12[[1]]$n >= progLiczebnosci) {
   cat(
     "Spośród absolwentów Państwa szkoły z rocznika ",
@@ -77,7 +77,8 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
     powiaty_dop,
     " ",
     round((god$S3_12[[1]]$ucz_prac + god$S3_12[[1]]$tylko_ucz) * 100),
-    "%.\n\nStudia lub edukację w szkole policealnej z zatrudnieniem na podstawie umowy o pracę lub z wykonywaniem własnej działalności gospodarczej (samozatrudnieniem)^[W przypadku uczniów i studentów do 26. roku życia nie są dostępne dane dotyczące ewentualnego wykonywania pracy na podstawie umów cywilnoprawnych.] łączyło ",
+    "%.\n\n",
+    "Studia lub edukację w szkole policealnej z zatrudnieniem na podstawie umowy o pracę lub z wykonywaniem własnej działalności gospodarczej (samozatrudnieniem)^[W przypadku uczniów i studentów do 26. roku życia nie są dostępne dane dotyczące ewentualnego wykonywania pracy na podstawie umów cywilnoprawnych.] łączyło ",
     round(szk$S3_12[[1]]$ucz_prac * 100),
     "% absolwentów Państwa szkoły. Odsetek takich osób wśród absolwentów Państwa szkoły był ",
     case_when(
@@ -89,13 +90,15 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
     powiaty_dop,
     " (",
     round(god$S3_12[[1]]$ucz_prac * 100),
-    "%), z tego samego rocznika.\n\nW tym samym miesiącu ",
+    "%), z tego samego rocznika.\n\n",
+    "W tym samym miesiącu ",
     round(szk$S3_12[[1]]$tylko_prac * 100),
-    "% absolwentów Państwa liceum pracowało^[Na podstawie umowy o pracę, umowy cywilnoprawnej lub prowadząc własną działalność gospodarczą.], ale nie studiowało ani nie uczęszczało do szkoły ponadpodstawowej. Do grupy pracujących, ale nie kontynuujących edukacji formalnej należało ",
+    "% absolwentów Państwa liceum pracowało^[Na podstawie umowy o pracę, umowy zlecenia lub prowadząc własną działalność gospodarczą.], ale nie studiowało ani nie uczęszczało do szkoły ponadpodstawowej. Do grupy pracujących, ale nie kontynuujących edukacji formalnej należało ",
     round(god$S3_12[[1]]$tylko_prac * 100),
     "% absolwentów z ",
     powiaty_dop,
-    ".\n\nSpośród absolwentów Państwa szkoły w grudniu ",
+    ".\n\n",
+    "Spośród absolwentów Państwa szkoły w grudniu ",
     params$rok,
     " roku ",
     round(szk$S3_12[[1]]$bezrob * 100),
@@ -103,7 +106,8 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
     round(god$S3_12[[1]]$bezrob * 100),
     "% absolwentów pozostałych liceów dla dorosłych z ",
     powiaty_dop,
-    ".\n\nW grudniu ",
+    ".\n\n",
+    "W grudniu ",
     params$rok,
     " nie odnotowano żadnej aktywności związanej z pracą zawodową lub nauką (tj. wykonywania pracy, kontynuowania edukacji formalnej ani zarejestrowanego bezrobocia) w przypadku ",
     round(szk$S3_12[[1]]$neet * 100),
@@ -119,7 +123,7 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$S3_12[[1]]$n >= progLiczebnosci) {
   nazwy_wierszy = c(
     "Tylko nauka",
@@ -195,7 +199,7 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$S3_12[[1]]$n >= progLiczebnosci) {
   lip_sier = c(
     "lipcu" = round(szk$S3_07[[1]]$ucz_prac * 100),
@@ -254,7 +258,7 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 szkoly_month = rbind(
   as_tibble(szk$S3_07[[1]]),
   as_tibble(szk$S3_08[[1]]),
@@ -348,7 +352,7 @@ if (min(szkoly_month$n) >= progLiczebnosci) {
 
 ## Sposoby kontynuowania kształcenia w grudniu `r params$rok` roku
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
   kontyn = as_tibble(szk$E2_nauka_kontyn[[1]]) %>% 
     select(-c(n, brak)) %>% 
@@ -418,7 +422,7 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=3}
+```{r, fig.height=3}
 if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
   nazwy_wierszy = c(
     "bs2", # tej etykiety nie będzie bo nie biorę tej kolumny
@@ -468,7 +472,7 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
 
 ## Kontynuowanie nauki na studiach w poszczególnych dziedzinach i dyscyplinach
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (any(!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek))) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
     if (sum(szk$liczebnosc_dziedziny[[1]]$odsetek > 0, na.rm = TRUE) == 1) {
@@ -514,7 +518,7 @@ if (any(!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek))) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (any(!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek))) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
     cat("Tabela ",
@@ -554,7 +558,7 @@ if (any(!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek))) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (any(!is.na(szk$liczebnosc_dyscypliny[[1]]$odsetek))) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
     if (sum(szk$liczebnosc_dyscypliny[[1]]$odsetek > 0, na.rm = TRUE) == 1) {
@@ -594,7 +598,7 @@ if (any(!is.na(szk$liczebnosc_dyscypliny[[1]]$odsetek))) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (any(!is.na(szk$liczebnosc_dyscypliny[[1]]$odsetek))) {
   if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
     cat("Tabela ",
@@ -650,7 +654,7 @@ W związku z tym wskaźnik jest prezentowany oddzielnie dla każdej z tych grup^
 
 ### Absolwenci w okresie, gdy kontynuowali naukę
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (length(szk$Z4_ucz[[1]]) > 0) {
   if (szk$Z4_ucz[[1]]$n >= progLiczebnosci) {
     przeprac_ods = szk$Z4_ucz[[1]] %>% 
@@ -699,7 +703,7 @@ if (length(szk$Z4_ucz[[1]]) > 0) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (length(szk$Z4_ucz[[1]]) > 0) {
   if (szk$Z4_ucz[[1]]$n >= progLiczebnosci) {
     etykiety = c("srednia", "mediana", "p0", "czesc", "p100")
@@ -767,7 +771,7 @@ if (length(szk$Z4_ucz[[1]]) > 0) {
 
 ### Absolwenci w okresie, gdy nie kontynuowali nauki
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (length(szk$Z4_nie_ucz[[1]]) > 0) {
   if (szk$Z4_nie_ucz[[1]]$n >= progLiczebnosci) {
     przeprac_ods = szk$Z4_nie_ucz[[1]] %>% 
@@ -816,7 +820,7 @@ if (length(szk$Z4_nie_ucz[[1]]) > 0) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$Z4_nie_ucz[[1]]$n >= progLiczebnosci) {
   etykiety = c("srednia", "mediana", "p0", "czesc", "p100")
   
@@ -884,7 +888,7 @@ if (szk$Z4_nie_ucz[[1]]$n >= progLiczebnosci) {
 
 ### Absolwenci kontynuujący naukę
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=6}
+```{r}
 if (szk$Z8_formy_ucz[[1]]$n >= progLiczebnosci) {
   cat(
     "W grudniu ",
@@ -911,7 +915,7 @@ if (szk$Z8_formy_ucz[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=6}
+```{r, fig.height=6}
 if (szk$Z8_formy_ucz[[1]]$n >= progLiczebnosci) {
   etykiety = c("Zatrudnieni tylko na podstawie umowy o pracę",
                "Tylko samozatrudnieni",
@@ -972,7 +976,7 @@ if (szk$Z8_formy_ucz[[1]]$n >= progLiczebnosci) {
 
 ### Absolwenci niekontynuujący nauki
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=6}
+```{r}
 if (szk$Z8_formy_nie_ucz[[1]]$n >= progLiczebnosci) {
   szk_minus_god = list(
     nieucz_uop = round(szk$Z8_formy_nie_ucz[[1]]$nieucz_uop * 100) - round(god$Z8_formy_nie_ucz[[1]]$nieucz_uop * 100),
@@ -1011,7 +1015,7 @@ if (szk$Z8_formy_nie_ucz[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=6}
+```{r, fig.height=6}
 if (szk$Z8_formy_nie_ucz[[1]]$n >= progLiczebnosci) {
   etykiety = c("Zatrudnieni tylko na podstawie umowy o pracę",
                "Tylko samozatrudnieni",
@@ -1078,13 +1082,13 @@ Należy zastrzec, że kwoty te nie są porównywalne, ze względu na różnice w
 
 Na poniższej ilustracji opisano sposób prezentowania danych na wykresie typu boxplot wraz z ich interpretacją. Dane na tym wykresie są fikcyjne – służy on tylko objaśnieniu jakiego rodzaju informacje można znaleźć na tego typu wykresach.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, out.width = '100%'}
+```{r, out.width='100%'}
 knitr::include_graphics("../boxplot_edycja4.png")
 ```
 
 ### Absolwenci kontynuujący naukę
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$W3_ucz[[1]]$n >= progLiczebnosci) {
   cat(
     "Mediana średnich miesięcznych przychodów z pracy absolwentów Państwa szkoły, zatrudnionych na podstawie umowy o pracę i kontynuujących naukę, wynosiła ",
@@ -1101,7 +1105,7 @@ if (szk$W3_ucz[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$W3_ucz[[1]]$n >= progLiczebnosci) {
   etykiety = c("sred", "q5", "q25", "med", "q75", "q95")
   
@@ -1149,7 +1153,7 @@ if (szk$W3_ucz[[1]]$n >= progLiczebnosci) {
 
 ### Absolwenci niekontynuujący nauki
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$W3_nie_ucz[[1]]$n >= progLiczebnosci) {
   cat(
     "Mediana średnich miesięcznych przychodów z pracy absolwentów Państwa szkoły, zatrudnionych na podstawie umowy o pracę i niekontynuujących nauki, wynosiła ",
@@ -1166,7 +1170,7 @@ if (szk$W3_nie_ucz[[1]]$n >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE}
+```{r}
 if (szk$W3_nie_ucz[[1]]$n >= progLiczebnosci) {
   etykiety = c("sred", "q5", "q25", "med", "q75", "q95")
   
@@ -1218,7 +1222,7 @@ if (szk$W3_nie_ucz[[1]]$n >= progLiczebnosci) {
 
 Poszczególni absolwenci Państwa szkoły pomiędzy jej ukończeniem a końcem roku kalendarzowego, w którym to nastąpiło (tj. w okresie od września do grudnia `r params$rok` roku) mogli być zarejestrowani jako bezrobotni w ciągu maksymalnie czterech miesięcy. 
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=3}
+```{r}
 if (szk$l_abs[[1]] >= progLiczebnosci) {
   cat(
     "Wśród absolwentów Państwa szkoły ",
@@ -1239,7 +1243,7 @@ if (szk$l_abs[[1]] >= progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, results='asis', fig.align=wyrownanieTabWykr, warning=FALSE, fig.height=3}
+```{r, fig.height=3}
 if (szk$l_abs[[1]] >= progLiczebnosci) {
   tab_wyk = tab_facet(szk$B2_bezrob[[1]],
                       god$B2_bezrob[[1]],
@@ -1305,7 +1309,7 @@ Więcej informacji o monitorowaniu karier absolwentów znajdą Państwo na stron
 
 # 6. Aneks: wyniki dla absolwentów liceów ogólnokształcących dla dorosłych `r ifelse(woj$l_abs[[1]] < progLiczebnosci, paste0(""), paste0("z województwa i", "\u00A0"))`z`r paste0("\u00A0")`całego kraju
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 god1 = god1 %>% 
   filter(typ_szk %in% szk$typ_szk[[1]],
          nazwa_zaw %in% unique(szk$tab_s3_zaw[[1]]$nazwa_zaw))
@@ -1322,7 +1326,7 @@ W aneksie zaprezentowano tabelaryczne rozkłady wybranych wskaźników przedstaw
 
 1. Status edukacyjno-zawodowy w grudniu `r params$rok` roku - ogółem
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
   god2$S3_12[[1]] %>%
     as_tibble() %>% 
@@ -1375,7 +1379,7 @@ rbind(tabela_woj, tabela_kraj) %>%
 
 2. Sposoby kontynuowania nauki w grudniu `r params$rok` roku
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (woj$l_abs[[1]] < progLiczebnosci | woj$E2_nauka_kontyn[[1]]$n < progLiczebnosci) {
   tabelka_bez_brak = god2$E2_nauka_kontyn[[1]][-1] %>% 
     as_tibble() %>% 
@@ -1537,7 +1541,7 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$E2_nauka_kontyn[[1]]$n < progLiczebno
 
 3. Praca po ukończeniu liceum ogólnokształcącego dla dorosłych w okresie od września do grudnia `r params$rok` roku
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (woj$l_abs[[1]] < progLiczebnosci | woj$Z4_ucz[[1]]$n < progLiczebnosci) {
   cat("Procentowy udział grup wyróżnionych ze względu na część przepracowanego okresu wśród absolwentów liceów ogólnokształcących dla dorosłych z całego kraju.\n\n",
       "  a) Część przepracowanego okresu\n\n",
@@ -1617,7 +1621,7 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$Z4_ucz[[1]]$n < progLiczebnosci) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (woj$l_abs[[1]] >= progLiczebnosci & woj$Z4_ucz[[1]]$n >= progLiczebnosci) {
   cat("  a) województwo ",
       woj$odmiany[[1]]$nazwa,
@@ -1780,7 +1784,7 @@ if (woj$l_abs[[1]] >= progLiczebnosci & woj$Z4_ucz[[1]]$n >= progLiczebnosci) {
 
 4. Bezrobocie rejestrowane od września do grudnia `r params$rok` roku
 
-```{r, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='asis', fig.align=wyrownanieTabWykr}
+```{r}
 if (woj$l_abs[[1]] < progLiczebnosci | sum(woj$B2_bezrob[[1]]$n) < progLiczebnosci) {
   cat("Procentowy udział grup wyróżnionych ze względu na część okresu, w ciągu którego byli zarejestrowani jako bezrobotni, wśród absolwentów liceów ogólnokształcących dla dorosłych z całego kraju.")
   
