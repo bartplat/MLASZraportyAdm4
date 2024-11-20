@@ -38,5 +38,6 @@ knitr::opts_chunk$set(
   results = 'asis',
   message = FALSE,
   warning = FALSE,
+  error = FALSE,
   fig.align = wyrownanieTabWykr
 )

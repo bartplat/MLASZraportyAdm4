@@ -48,7 +48,7 @@ source("setup.R",
 
 # 2. Ścieżki edukacyjno-zawodowe
 
-W porównaniu z raportami z wcześniejszych edycji monitoringu karier, zwiększono liczbę prezentowanych statusów, opisujących sytuację edukacyjno-zawodową absolwentów. Status „Brak nauki i brak pracy” rozdzielono na „Bezrobocie” oraz „Brak danych o aktywności”. Poniższa tabela przybliża konstrukcję poszczególnych statusów.
+W porównaniu z raportami z wcześniejszych edycji monitoringu karier, zwiększono liczbę prezentowanych statusów, opisujących sytuację edukacyjno-zawodową absolwentów. Status „Brak nauki i brak pracy” rozdzielono na „Bezrobocie” oraz „Brak danych o aktywności”. Poniższa tabela objaśnia konstrukcję poszczególnych statusów.
 
 ```{r}
 statusy_df %>% 
@@ -91,7 +91,7 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
     powiaty_dop,
     " (",
     round(god$S3_12[[1]]$ucz_prac * 100),
-    "%), z tego samego rocznika.\n\n",
+    "%) z tego samego rocznika.\n\n",
     "W tym samym miesiącu ",
     round(szk$S3_12[[1]]$tylko_prac * 100),
     "% absolwentów Państwa szkoły pracowało^[Na podstawie umowy o pracę, umowy zlecenia lub prowadząc własną działalność gospodarczą.], ale nie uczęszczało do kolejnej szkoły. Do grupy pracujących, ale nie kontynuujących edukacji formalnej należało ",
@@ -360,10 +360,10 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
 ```{r}
 if (szk$S3_12[[1]]$n >= progLiczebnosci) {
   lip_sier = c(
-    "lipcu" = round(szk$S3_07[[1]]$ucz_prac * 100),
-    "sierpniu" = round(szk$S3_08[[1]]$ucz_prac * 100))
+    "lipcu" = round(szk$S3_07[[1]]$ucz_prac * 100) + round(szk$S3_07[[1]]$tylko_prac * 100),
+    "sierpniu" = round(szk$S3_08[[1]]$ucz_prac * 100) + round(szk$S3_08[[1]]$tylko_prac * 100))
   
-  wrz_gru = c(
+  lip_gru = c(
     "wrześniu" = round(szk$S3_09[[1]]$ucz_prac * 100) + round(szk$S3_09[[1]]$tylko_prac * 100),
     "październiku" = round(szk$S3_10[[1]]$ucz_prac * 100) + round(szk$S3_10[[1]]$tylko_prac * 100), 
     "listopadzie" = round(szk$S3_11[[1]]$ucz_prac * 100) + round(szk$S3_11[[1]]$tylko_prac * 100),
@@ -374,7 +374,7 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
     params$rok,
     " roku zmieniały się proporcje pomiędzy grupami uczniów i absolwentów Państwa szkoły, wyodrębnionymi ze względu na aktywność edukacyjną i zawodową.\n\nW okresie od lipca do sierpnia ",
     params$rok,
-    " roku^[Tj. do momentu, kiedy obecni absolwenci Państwa szkoły przestali być jej uczniami.] odsetek uczniów ostatnich klas Państwa szkoły pracujących na podstawie umowy o pracę^[W tym na podstawie umowy o pracę w celu przygotowania zawodowego. W tym okresie dla żadnego z obecnych absolwentów Państwa szkoły nie możemy zaobserwować zatrudnienia na podstawie umowy zlecenia, ponieważ byli jeszcze uczniami - w przypadku uczniów i studentów do 26. roku życia nie są dostępne dane dotyczące ewentualnego wykonywania pracy na podstawie umów zleceń] lub samozatrudnionych, wynosił ",
+    " roku^[Tj. do momentu, kiedy obecni absolwenci Państwa szkoły przestali być jej uczniami.] odsetek uczniów ostatnich klas Państwa szkoły pracujących na podstawie umowy o pracę^[W tym na podstawie umowy o pracę w celu przygotowania zawodowego. W tym okresie dla żadnego z obecnych absolwentów Państwa szkoły nie możemy zaobserwować zatrudnienia na podstawie umowy zlecenia, ponieważ byli jeszcze uczniami - w przypadku uczniów i studentów do 26. roku życia nie są dostępne dane dotyczące ewentualnego wykonywania pracy na podstawie umów zleceń] lub samozatrudnionych wynosił ",
     if (length(unique(lip_sier)) %in% 1) {
       paste0(round(szk$S3_07[[1]]$ucz_prac * 100), "%.\n\n")
     } else {
@@ -393,7 +393,7 @@ if (szk$S3_12[[1]]$n >= progLiczebnosci) {
     },
     "Natomiast w okresie od września do grudnia ",
     params$rok,
-    " odsetek absolwentów Państwa szkoły pracujących na podstawie umowy o pracę, samozatrudnionych, a także - w przypadku osób niekontynuujących nauki - pracujących na podstawie umowy zlecenia, wynosił łącznie ",
+    " roku odsetek absolwentów Państwa szkoły pracujących na podstawie umowy o pracę, samozatrudnionych, a także - w przypadku osób niekontynuujących nauki - pracujących na podstawie umowy zlecenia, wynosił łącznie ",
     if (length(unique(wrz_gru)) %in% 1) {
       paste0(round(szk$S3_09[[1]]$ucz_prac * 100) + round(szk$S3_09[[1]]$tylko_prac * 100), "%.")
     } else {
@@ -513,7 +513,6 @@ if (min(szkoly_month$n) >= progLiczebnosci) {
 ```{r}
 if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
   kontyn = as_tibble(szk$E2_nauka_kontyn[[1]]) %>% 
-    # select(bs2, lodd, kkz, kuz) %>% 
     select(-c(n, brak)) %>% 
     pivot_longer(everything()) %>% 
     mutate(nazwa = case_when(
@@ -526,8 +525,8 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
   
   sposoby = kontyn %>% 
     pull(value) %>% 
-    sum() %>% 
-    round(. * 100)
+    sum(. * 100) %>% 
+    round()
   
   if (sposoby != 0) {
     if (!sposoby %in% c(50, 100)) {
@@ -552,9 +551,9 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
       cat(
         paste(kontyn$nazwa, collapse = "\n")
       )
-    } else if (sposoby %in% 100) {
+    } else if (sposoby == 100) {
       cat(
-        "Wśród absolwentów Państwa szkoły z rocznika ",
+        "\n\nWśród absolwentów Państwa szkoły z rocznika ",
         rocznik,
         " w grudniu ",
         params$rok,
@@ -562,10 +561,14 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
         sep = ""
       )
     }
-    
-    if (round(szk$E2_nauka_kontyn[[1]]$brak * 100) %in% 50) {
+    if (round(szk$E2_nauka_kontyn[[1]]$brak * 100) == 50) {
       cat(
-        "Połowa absolwentów Państwa szkoły nie kontynuowała kształcenia.\n\n"
+        "\n\nWśród absolwentów Państwa szkoły z rocznika ",
+        rocznik,
+        " połowa absolwentów nie kontynuowała kształcenia w grudniu ",
+        params$rok,
+        " roku.\n\n",
+        sep = ""
       )
     }
   } else {
@@ -573,7 +576,7 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
         rocznik,
         " w grudniu ",
         params$rok,
-        " roku nie kontynuował nauki w branżowej szkole II stopnia, w liceum dla dorosłych, na Kwalifikacyjnych Kursach Zawodowych ani na Kursach Umiejętności Zawodowych.",
+        " roku nie kontynuował nauki w systemie edukacji formalnej.",
         sep = "")
   }
 } else {
@@ -711,12 +714,14 @@ if (round(szk$E2_nauka_kontyn[[1]]$bs2 * szk$E2_nauka_kontyn[[1]]$n) >= progLicz
 }
 ```
 
+## Kontynuowanie nauki w branżowych szkołach II stopnia w podziale na wyuczony zawód
+
 ```{r}
 if (round(szk$E2_nauka_kontyn[[1]]$bs2 * szk$E2_nauka_kontyn[[1]]$n) >= progLiczebnosci) {
   l_col = length(szk$branze_zawody[[1]]) - 1
   if (length(szk$branze_zawody[[1]]) > 1 & l_col > 0) {
     cat(
-      "W poniższej tabeli przedstawione zostały informacje o branżach, w których w branżowych szkołach II stopnia uczyli się absolwenci Państwa szkoły, należący do poszczególnych grup (liczących co najmniej 10 osób) wyróżnionych ze względu na zawód, w którym się w niej kształcili.")
+      "W poniższej tabeli przedstawione zostały informacje o branżach, w których w branżowych szkołach II stopnia uczyli się absolwenci Państwa szkoły, należący do poszczególnych grup (liczących co najmniej 10 osób) wyróżnionych ze względu na zawód, w którym się kształcili.")
     
     naz_wiersze_nag = character()
     for (i in 1:l_col) {
@@ -793,7 +798,7 @@ if (szk$Z4_ucz[[1]]$n >= progLiczebnosci) {
     paste0("pracowały przez część miesięcy w okresie od września do grudnia ", params$rok),
     paste0("pracowały w każdym miesiącu w okresie od września do grudnia ", params$rok))
   
-  if (length(przeprac_ods$name[przeprac_ods$value %in% max(przeprac_ods$value)]) %in% 1) {
+  if (length(przeprac_ods$name[przeprac_ods$value == max(przeprac_ods$value)]) == 1) {
     cat(
       "Wśród absolwentów Państwa szkoły kontynuujących naukę najliczniejsza była grupa osób, które ",
       przeprac_ods$name[przeprac_ods$value %in% max(przeprac_ods$value)],
@@ -1751,7 +1756,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$S3_12[[1]]$n < progLiczebnosci) {
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
     add_header_above(c(" ", "1. Tylko nauka" = 1, "2. Nauka i praca" = 1, "3. Tylko praca" = 1, "4. Bezrobocie" = 1, "5. Brak danych\no aktywności" = 1),
@@ -1808,7 +1812,7 @@ tabela = tabela %>%
 
 if (nrow(tabela) > 0) {
   cat(
-    "Poniższa tabela przedstawia sytuację edukacyjno-zawodową absolwentów wykształconych w poszczególnych zawodach w branżowych szkołach I stopnia w całym kraju. Prezentowane są zawody, w których absolwentami zostali absolwenci Państwa szkoły, pod warunkiem, że na poziomie kraju w danym zawodzie kształciło się co najmniej 10 absolwentów. W przeciwnym razie sytuacja absolwentów wykształconych w danym zawodzie nie została przedstawiona.\n\n")
+    "Poniższa tabela przedstawia sytuację edukacyjno-zawodową absolwentów wykształconych w poszczególnych zawodach w branżowych szkołach I stopnia w całym kraju. Prezentowane są zawody, w których absolwentami zostali uczniowie Państwa szkoły, pod warunkiem, że na poziomie kraju w danym zawodzie kształciło się co najmniej 10 absolwentów. W przeciwnym razie sytuacja absolwentów wykształconych w danym zawodzie nie została przedstawiona.\n\n")
   
   tabela %>% 
     mutate(across(tylko_ucz:neet,
