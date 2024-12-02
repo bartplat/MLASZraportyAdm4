@@ -33,10 +33,12 @@ params:
 ```{r setup, echo=FALSE, include=FALSE}
 source("setup.R",
        echo = FALSE,
-       local = knitr::knit_global())
+       local = TRUE)
 ```
 
 `r ifelse(typDokumentu %in% "pdf", "---", "")`
+
+`r ifelse(typDokumentu %in% "pdf", "\\vfill\n\\includegraphics{Belka-Losy-absolwentow-Kolor-PL}", "")`
 
 `r ifelse(typDokumentu %in% "pdf", "\\newpage", "")`
 
@@ -536,9 +538,9 @@ if (szk$E2_nauka_kontyn[[1]]$n >= progLiczebnosci) {
         " przeważały osoby, które w grudniu ",
         params$rok,
         " roku ",
-        if (round(sposoby * 100) < 50) {
+        if (round(sposoby) < 50) {
           paste0("nie kontynuowały kształcenia (uwzględniono również KKZ i KUZ).\n\n")
-        } else if (round(sposoby * 100) > 50) {
+        } else if (round(sposoby) > 50) {
           paste0("kontynuowały kształcenie (uwzględniono również KKZ i KUZ).\n\n")
         },
         sep = ""
@@ -670,6 +672,12 @@ if (any(!is.na(szk$liczebnosc_dziedziny[[1]]$odsetek))) {
         sep = ""
       )
     }
+  } else {
+    cat(
+    "Liczba absolwentów Państwa szkoły, którzy w grudniu ",
+    params$rok,
+    " roku studiowali, nie była wystarczająca, żeby możliwe było przedstawienie wyników dla tej grupy zgodnie z zasadą chroniącą anonimowość absolwentów.",
+    sep = "")
   }
 } else {
   cat(
@@ -829,11 +837,16 @@ if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progL
         sep = "")
     
     # tu nie ma ograniczenia na max 10 dyscyplin, natomiast jest ograniczenie na liczbę zawodów
-    szk$dyscypliny_zawody[[1]] %>% 
+    tab = szk$dyscypliny_zawody[[1]] %>% 
       as_tibble() %>% 
       mutate(across(2:ncol(.),
-                    ~paste0(round(. * 100), "\\%"))) %>% 
-      mutate(across(1, ~wrapper(., width = 50))) %>% 
+                    ~paste0(round(. * 100), "\\%")))
+    
+    
+    tab$dyscyplina_wiodaca_kont = unname(sapply(tab$dyscyplina_wiodaca_kont, wrapper, width = 50))
+    tab$dyscyplina_wiodaca_kont = linebreak(tab$dyscyplina_wiodaca_kont, align = "l")
+    
+    tab = tab %>% 
       kable(format = "latex",
             booktabs = TRUE,
             escape = FALSE,
@@ -847,9 +860,11 @@ if (round(szk$E2_nauka_kontyn[[1]]$studia * szk$E2_nauka_kontyn[[1]]$n) >= progL
                     repeat_header_text = "(ciąg dalszy tabeli)") %>%
       add_header_above(header = c(paste0("Dyscypliny, w których absolwenci Państwa\nszkoły studiowali w grudniu ", params$rok, " roku"), nagl), align = "l") %>% 
       add_header_above(header = c(" ", wiersze_nag), align = "l")
-  } else {
-    cat("Żadna grupa studiujących absolwentów Państwa szkoły wyróżniona ze względu na zawód, którego się w niej uczyli, nie liczyła co najmniej 10 osób. Dlatego, zgodnie z zasadą chroniącą anonimowość absolwentów, informacje dotyczące dyscyplin, w których studiowali absolwenci Państwa szkoły wykształceni w poszczególnych zawodach nie zostały przedstawione.")
+    
+    cat(tab)
   }
+} else {
+  cat("Żadna grupa studiujących absolwentów Państwa szkoły wyróżniona ze względu na zawód, którego się w niej uczyli, nie liczyła co najmniej 10 osób. Dlatego, zgodnie z zasadą chroniącą anonimowość absolwentów, informacje dotyczące dyscyplin, w których studiowali absolwenci Państwa szkoły wykształceni w poszczególnych zawodach nie zostały przedstawione.")
 }
 ```
 
@@ -1091,6 +1106,13 @@ if (szk$Z4_nie_ucz[[1]]$n >= progLiczebnosci) {
 
 ## Formy wykonywania pracy w grudniu `r params$rok` roku
 
+W tym rozdziale, do opisu sytuacji zawodowej absolwentów użyto 4 form wykonywania pracy:
+
+* „Zatrudnieni tylko na UOP” - osoby zatrudnione tylko na umowę o pracę (UOP)
+* „Tylko samozatrudnieni” - prowadzący własną działalność gospodarczą jako jedyną aktywność zawodową
+* „Tylko inna forma” - osoby zatrudnione wyłącznie na podstawie pozostałych form umów - np. umowa zlecenie, umowa agencyjna, umowa o świadczenie usług i inne (np. osoby zatrudnione na umowie o staż z urzędu pracy, będące w czynnej służbie wojskowej czy otrzymujący stypendia sportowe)
+* „Więcej niż jedna forma” - absolwenci łączący więcej niż jedną z powyższych form zatrudnienia
+
 ### Absolwenci kontynuujący naukę
 
 ```{r}
@@ -1200,19 +1222,23 @@ if (szk$Z8_formy_nie_ucz[[1]]$n >= progLiczebnosci) {
     round(szk$Z8_formy_nie_ucz[[1]]$nieucz_inna * 100),
     "% było zatrudnionych tylko “w innej formie”, czyli przeważnie na podstawie umowy cywilnoprawnej. Pozostali łączyli co najmniej dwie formy zatrudnienia.\n\nNiekontynuujący nauki absolwenci Państwa szkoły pracowali wyłącznie na podstawie umowy o pracę ",
     case_when(
+      szk_minus_god$nieucz_uop >= 3 & round(szk$Z8_formy_nie_ucz[[1]]$nieucz_uop * 100) == 0 ~ "częściej niż",
       szk_minus_god$nieucz_uop > 3 ~ "częściej niż",
-      szk_minus_god$nieucz_uop >= -3 & szk_minus_god$nieucz_uop <= 3 ~ "podobnie często, co",
-      szk_minus_god$nieucz_uop < -3 ~ "rzadziej niż"),
+      szk_minus_god$nieucz_uop <= -3 & round(szk$Z8_formy_nie_ucz[[1]]$nieucz_uop * 100) == 0 ~ "rzadziej niż",
+      szk_minus_god$nieucz_uop < -3 ~ "rzadziej niż",
+      szk_minus_god$nieucz_uop >= -3 & szk_minus_god$nieucz_uop <= 3 ~ "podobnie często, co"),
     " absolwenci pozostałych szkół policealnych z ",
     powiaty_dop,
     ".\n\nZarazem niekontynuujący nauki absolwenci Państwa szkoły ",
     case_when(
+      szk_minus_god$nieucz_samoz >= 3 & round(szk$Z8_formy_nie_ucz[[1]]$nieucz_samoz * 100) == 0 ~ "częściej niż",
       szk_minus_god$nieucz_samoz > 3 ~ "częściej niż",
-      szk_minus_god$nieucz_samoz >= -3 & szk_minus_god$nieucz_samoz <= 3 ~ "podobnie często, co",
-      szk_minus_god$nieucz_samoz < -3 ~ "rzadziej niż"),
+      szk_minus_god$nieucz_samoz <= -3 & round(szk$Z8_formy_nie_ucz[[1]]$nieucz_samoz * 100) == 0 ~ "rzadziej niż",
+      szk_minus_god$nieucz_samoz < -3 ~ "rzadziej niż",
+      szk_minus_god$nieucz_samoz >= -3 & szk_minus_god$nieucz_samoz <= 3 ~ "podobnie często, co"),
     " absolwenci pozostałych szkół policealnych z ",
     powiaty_dop,
-    " pracowali wyłącznie prowadząc własną działalność gospodarczą.\n\n",
+    ", pracowali wyłącznie prowadząc własną działalność gospodarczą.\n\n",
     sep = ""
   )
 } else {
@@ -1677,7 +1703,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$E2_nauka_kontyn[[1]]$n < progLiczebno
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
     add_header_above(c("Sposób kontynuowania kształcenia", "Udział kontynuujących kształcenie wśród\nabsolwentów szkół policealnych z całego kraju" = 1),
@@ -1733,7 +1758,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$E2_nauka_kontyn[[1]]$n < progLiczebno
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
     add_header_above(c("Sposób kontynuowania kształcenia", nagl),
@@ -1784,7 +1808,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$E2_nauka_kontyn[[1]]$n < progLiczebno
           digits = 0) %>% 
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>% 
     add_header_above(c("Sposób kontynuowania kształcenia", "Udział kontynuujących kształcenie wśród\nabsolwentów szkół policealnych z całego kraju" = 1),
@@ -1797,6 +1820,13 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$E2_nauka_kontyn[[1]]$n < progLiczebno
 ```
 
 3. Praca po ukończeniu szkoły policealnej w okresie od września do grudnia `r params$rok` roku
+
+Wyróżniono 4 formy wykonywania pracy:
+
+* „Zatrudnieni tylko na UOP” - osoby zatrudnione tylko na umowę o pracę (UOP)
+* „Tylko samozatrudnieni” - prowadzący własną działalność gospodarczą jako jedyną aktywność zawodową
+* „Tylko inna forma” - osoby zatrudnione wyłącznie na podstawie pozostałych form umów - np. umowa zlecenie, umowa agencyjna, umowa o świadczenie usług i inne (np. osoby zatrudnione na umowie o staż z urzędu pracy, będące w czynnej służbie wojskowej czy otrzymujący stypendia sportowe)
+* „Więcej niż jedna forma” - absolwenci łączący więcej niż jedną z powyższych form zatrudnienia
 
 ```{r}
 if (woj$l_abs[[1]] < progLiczebnosci | woj$Z4_ucz[[1]]$n < progLiczebnosci) {
@@ -1830,7 +1860,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$Z4_ucz[[1]]$n < progLiczebnosci) {
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 9,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c(" ", "Absolwenci szkół policealnych\nkontynuujący naukę" = 1, "Absolwenci szkół policealnych\nniekontynuujący nauki" = 1),
@@ -1869,7 +1898,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | woj$Z4_ucz[[1]]$n < progLiczebnosci) {
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c(" ", "Absolwenci szkół policealnych\nkontynuujący naukę" = 1, "Absolwenci szkół policealnych\nniekontynuujący nauki" = 1),
@@ -1914,7 +1942,6 @@ if (woj$l_abs[[1]] >= progLiczebnosci & woj$Z4_ucz[[1]]$n >= progLiczebnosci) {
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 9,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c(" ", "Absolwenci szkół policealnych\nkontynuujący naukę" = 1, "Absolwenci szkół policealnych\nniekontynuujący nauki" = 1),
@@ -1955,7 +1982,6 @@ if (woj$l_abs[[1]] >= progLiczebnosci & woj$Z4_ucz[[1]]$n >= progLiczebnosci) {
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c(" ", "Absolwenci szkół policealnych\nkontynuujący naukę" = 1, "Absolwenci szkół policealnych\nniekontynuujący nauki" = 1),
@@ -1991,7 +2017,6 @@ if (woj$l_abs[[1]] >= progLiczebnosci & woj$Z4_ucz[[1]]$n >= progLiczebnosci) {
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 9,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c(" ", "Absolwenci szkół policealnych\nkontynuujący naukę" = 1, "Absolwenci szkół policealnych\nniekontynuujący nauki" = 1),
@@ -2030,7 +2055,6 @@ if (woj$l_abs[[1]] >= progLiczebnosci & woj$Z4_ucz[[1]]$n >= progLiczebnosci) {
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c(" ", "Absolwenci szkół policealnych\nkontynuujący naukę" = 1, "Absolwenci szkół policealnych\nniekontynuujący nauki" = 1),
@@ -2060,7 +2084,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | sum(woj$B2_bezrob[[1]]$n) < progLiczebnos
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c("Liczba miesięcy bezrobocia", "Odsetek"),
@@ -2089,7 +2112,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | sum(woj$B2_bezrob[[1]]$n) < progLiczebnos
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c("Liczba miesięcy bezrobocia", "Odsetek"),
@@ -2113,7 +2135,6 @@ if (woj$l_abs[[1]] < progLiczebnosci | sum(woj$B2_bezrob[[1]]$n) < progLiczebnos
           digits = 0) %>%
     kable_styling(position = wyrownanieTabWykr,
                   latex_options = c("hold_position", "repeat_header"),
-                  # font_size = 10,
                   full_width = FALSE,
                   repeat_header_text = "(ciąg dalszy tabeli)") %>%
     add_header_above(c("Liczba miesięcy bezrobocia", "Odsetek"),
@@ -2121,4 +2142,14 @@ if (woj$l_abs[[1]] < progLiczebnosci | sum(woj$B2_bezrob[[1]]$n) < progLiczebnos
   
   cat(tabelka)
 }
+```
+
+`r ifelse(typDokumentu %in% "pdf", "\\newpage", "")`
+
+\centering
+
+Link do ankiety:
+
+```{r qr_code2, out.width = '150%'}
+knitr::include_graphics(szk$qr_code)
 ```
